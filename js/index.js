@@ -3,6 +3,7 @@
 // Select the Elements
 const clear = document.querySelector(".clear");
 const dateElement = document.getElementById("date");
+const timeElement = document.getElementById("time");
 const list = document.getElementById("list");
 const input = document.getElementById("input");
 
@@ -40,6 +41,16 @@ clear.addEventListener("click", function(){
     localStorage.clear();
     location.reload();
 });
+//show current time
+function clock(){
+    var date = new Date(),
+        hours = (date.getHours() < 10) ? '0' + date.getHours() : date.getHours(),
+        minutes = (date.getMinutes() < 10) ? '0' + date.getMinutes() : date.getMinutes(),
+        seconds = (date.getSeconds() < 10) ? '0' + date.getSeconds() : date.getSeconds();
+    timeElement.innerHTML = hours + ':' + minutes + ':' + seconds;
+}
+setInterval(clock, 1000);
+clock();
 
 // Show todays date
 const options = {weekday : "long", month:"short", day:"numeric"};
@@ -113,15 +124,19 @@ function removeToDo(element){
 // target the items created dynamically
 
 list.addEventListener("click", function(event){
+    let elementJob = null;
     const element = event.target; // return the clicked element inside list
-    const elementJob = element.attributes.job.value; // complete or delete
-    
-    if(elementJob == "complete"){
-        completeToDo(element);
-    }else if(elementJob == "delete"){
-        removeToDo(element);
+    if(element.hasAttribute("job")){
+        elementJob = element.attributes.job.value; // complete or delete
+        if(elementJob == "complete"){
+            completeToDo(element);
+        }else if(elementJob == "delete"){
+            removeToDo(element);
+        }
     }
-    
+    else{
+        return
+    }
     // add item to localstorage ( this code must be added where the LIST array is updated)
     localStorage.setItem("TODO", JSON.stringify(LIST));
 });
